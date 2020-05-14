@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -265,6 +267,35 @@ public class StockController {
             }
         }
         return endresult;
+    }
+
+    @PostMapping("/kline")
+    public List<CustomKlineNode> queryKlineByStockcode(@RequestParam("stockcode") String stockcode){
+        Kline kline = stockService.queryKlineByStockcode(stockcode);//根据股票代码查询k线数据
+        List<CustomKlineNode> customKlineNodes = new ArrayList<>();//初始化一个自定义k线节点数组
+
+        //添加特定股票19天的k线数据到自定义节点数组中
+        customKlineNodes.add(new CustomKlineNode(kline.getDate0(),kline.getOpen0(),kline.getClose0(),kline.getHigh0(),kline.getLow0(),kline.getVolume0(),kline.getP_change0()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate1(),kline.getOpen1(),kline.getClose1(),kline.getHigh1(),kline.getLow1(),kline.getVolume1(),kline.getP_change1()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate2(),kline.getOpen2(),kline.getClose2(),kline.getHigh2(),kline.getLow2(),kline.getVolume2(),kline.getP_change2()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate3(),kline.getOpen3(),kline.getClose3(),kline.getHigh3(),kline.getLow3(),kline.getVolume3(),kline.getP_change3()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate4(),kline.getOpen4(),kline.getClose4(),kline.getHigh4(),kline.getLow4(),kline.getVolume4(),kline.getP_change4()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate5(),kline.getOpen5(),kline.getClose5(),kline.getHigh5(),kline.getLow5(),kline.getVolume5(),kline.getP_change5()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate6(),kline.getOpen6(),kline.getClose6(),kline.getHigh6(),kline.getLow6(),kline.getVolume6(),kline.getP_change6()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate7(),kline.getOpen7(),kline.getClose7(),kline.getHigh7(),kline.getLow7(),kline.getVolume7(),kline.getP_change7()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate8(),kline.getOpen8(),kline.getClose8(),kline.getHigh8(),kline.getLow8(),kline.getVolume8(),kline.getP_change8()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate9(),kline.getOpen9(),kline.getClose9(),kline.getHigh9(),kline.getLow9(),kline.getVolume9(),kline.getP_change9()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate10(),kline.getOpen10(),kline.getClose10(),kline.getHigh10(),kline.getLow10(),kline.getVolume10(),kline.getP_change10()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate11(),kline.getOpen11(),kline.getClose11(),kline.getHigh11(),kline.getLow11(),kline.getVolume11(),kline.getP_change11()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate12(),kline.getOpen12(),kline.getClose12(),kline.getHigh12(),kline.getLow12(),kline.getVolume12(),kline.getP_change12()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate13(),kline.getOpen13(),kline.getClose13(),kline.getHigh13(),kline.getLow13(),kline.getVolume13(),kline.getP_change13()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate14(),kline.getOpen14(),kline.getClose14(),kline.getHigh14(),kline.getLow14(),kline.getVolume14(),kline.getP_change14()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate15(),kline.getOpen15(),kline.getClose15(),kline.getHigh15(),kline.getLow15(),kline.getVolume15(),kline.getP_change15()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate16(),kline.getOpen16(),kline.getClose16(),kline.getHigh16(),kline.getLow16(),kline.getVolume16(),kline.getP_change16()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate17(),kline.getOpen17(),kline.getClose17(),kline.getHigh17(),kline.getLow17(),kline.getVolume17(),kline.getP_change17()));
+        customKlineNodes.add(new CustomKlineNode(kline.getDate18(),kline.getOpen18(),kline.getClose18(),kline.getHigh18(),kline.getLow18(),kline.getVolume18(),kline.getP_change18()));
+
+        return customKlineNodes;//返回自定义k线节点数组
     }
 
     /**

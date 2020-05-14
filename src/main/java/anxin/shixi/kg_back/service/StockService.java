@@ -2,6 +2,7 @@ package anxin.shixi.kg_back.service;
 
 import anxin.shixi.kg_back.dao.StockDao;
 import anxin.shixi.kg_back.pojo.Node.Concept;
+import anxin.shixi.kg_back.pojo.Node.Kline;
 import anxin.shixi.kg_back.pojo.Node.Plate;
 import anxin.shixi.kg_back.pojo.Node.Stock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,4 +116,11 @@ public class StockService {
     public Stock queryPriceByCode(String stockcode){
         return stockDao.queryPriceByCode(stockcode);
     }
+
+    /**
+     * 通过股票代码查询股票
+     * @param stockcode
+     * @return
+     */
+    public Kline queryKlineByStockcode(String stockcode){return stockDao.queryKlineByStockcode(stockcode);}
 }

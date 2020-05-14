@@ -2,6 +2,7 @@ package anxin.shixi.kg_back.dao;
 
 
 import anxin.shixi.kg_back.pojo.Node.Concept;
+import anxin.shixi.kg_back.pojo.Node.Kline;
 import anxin.shixi.kg_back.pojo.Node.Plate;
 import anxin.shixi.kg_back.pojo.Node.Stock;
 import org.springframework.data.neo4j.annotation.Query;
@@ -102,5 +103,13 @@ public interface StockDao extends Neo4jRepository<Stock,Long> {
      */
     @Query("MATCH (n:Stock) WHERE n.stockcode =~ '.*'+$stockcode+'.*' RETURN n")
     Stock queryPriceByCode(@Param("stockcode") String stockcode);
+
+    /**
+     * 通过股票代码查询K线数据
+     * @param stockcode
+     * @return
+     */
+    @Query("MATCH (n:Kline) WHERE n.stockcode =~ '.*'+$stockcode+'.*' RETURN n")
+    Kline queryKlineByStockcode(@Param("stockcode") String stockcode);
 
 }
