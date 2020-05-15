@@ -57,7 +57,7 @@ public interface StockDao extends Neo4jRepository<Stock,Long> {
     //Iterable<Object> queryRelationNodeByShorthand(@Param("shorthand") String shorthand);
 
     /**
-     * 查询板块的股票关系节点,返回市值最大的前50个节点
+     * 查询板块的股票关系节点,返回市值最大的前10个节点
      * @param platename
      * @return
      */
@@ -65,7 +65,7 @@ public interface StockDao extends Neo4jRepository<Stock,Long> {
     Set<Stock> queryPRNByPlatename(@Param("platename") String platename);
 
     /**
-     * 查询行业的股票关系节点,返回市值最大的前50个节点
+     * 查询行业的股票关系节点,返回市值最大的前10个节点
      * @param name
      * @return
      */
@@ -73,7 +73,7 @@ public interface StockDao extends Neo4jRepository<Stock,Long> {
     Set<Stock> queryIRNByName(@Param("name") String name);
 
     /**
-     * 查询地域的股票关系节点,返回市值最大的前50个节点
+     * 查询地域的股票关系节点,返回市值最大的前10个节点
      * @param provinces
      * @return
      */
@@ -81,12 +81,44 @@ public interface StockDao extends Neo4jRepository<Stock,Long> {
     Set<Stock> queryLRNByLocation(@Param("provinces") String provinces);
 
     /**
-     * 查询概念的股票关系节点,返回市值最大的前50个节点
+     * 查询概念的股票关系节点,返回市值最大的前10个节点
      * @param conceptname
      * @return
      */
     @Query("MATCH (n)-->(:Concept {conceptname: $conceptname }) RETURN n order by n.regcapital desc LIMIT 10")
     Set<Stock> queryCRNByConcept(@Param("conceptname") String conceptname);
+
+    /**
+     * 查询板块的股票关系节点,返回所有
+     * @param platename
+     * @return
+     */
+    @Query("MATCH (n)-->(:Plate {platename: $platename }) RETURN n")
+    Set<Stock> findPRNByPlatename(@Param("platename") String platename);
+
+    /**
+     * 查询行业的股票关系节点,返回所有
+     * @param name
+     * @return
+     */
+    @Query("MATCH (n)-->(:Industry {name: $name }) RETURN n")
+    Set<Stock> findIRNByName(@Param("name") String name);
+
+    /**
+     * 查询地域的股票关系节点,返回所有
+     * @param provinces
+     * @return
+     */
+    @Query("MATCH (n)-->(:Location {provinces: $provinces }) RETURN n")
+    Set<Stock> findLRNByLocation(@Param("provinces") String provinces);
+
+    /**
+     * 查询概念的股票关系节点,返回所有
+     * @param conceptname
+     * @return
+     */
+    @Query("MATCH (n)-->(:Concept {conceptname: $conceptname }) RETURN n")
+    Set<Stock> findCRNByConcept(@Param("conceptname") String conceptname);
 
     /**
      * 查询特定股票的概念关系节点,返回10个

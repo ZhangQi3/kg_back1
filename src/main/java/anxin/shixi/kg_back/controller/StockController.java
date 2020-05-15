@@ -11,18 +11,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @RestController
@@ -62,7 +56,8 @@ public class StockController {
      */
     @PostMapping("/queryByName")
     public Iterable<Stock> queryByName(@RequestParam("chinesename") String chinesename){//使用RequestParam获取key-value格式的参数
-        return stockService.queryByName(chinesename);
+        Iterable<Stock> stocks =stockService.queryByName(chinesename);
+        return stocks;
     }
 
     /**
@@ -72,7 +67,8 @@ public class StockController {
      */
     @PostMapping("/stock")
     public Stock findByStockcode(@RequestParam("shorthand") String shorthand){//前端写的nodeMsg就是股票代码
-        return stockService.findByshorthand(shorthand);
+        Stock stock = stockService.findByshorthand(shorthand);
+        return stock;
     }
 
     /**
@@ -80,31 +76,31 @@ public class StockController {
      * @param stockcode
      * @return
      */
-    @PostMapping("/querySRNByshorthand")
-    public Set<CustomNode> querySRNByshorthand(@RequestParam("stockcode") String stockcode){
-        Stock stock = findByStockcode(stockcode);//所点击的股票节点，即stockcode的股票实体
-        Set<CustomNode> relationNodes = new HashSet<>();//初始化自定义关系节点集合
-        Set<Location> locations = stock.getLocations();//地域关系节点
-        for(Location location:locations){//将每一个地域节点都装进自定义关系节点里
-            relationNodes.add(new CustomNode("Location",location.getProvinces(),location));
-        }
-        Set<Plate> plates = stock.getPlates();//板块关系节点
-        for(Plate plate:plates){//将每一个板块节点都装进自定义关系节点里
-            relationNodes.add(new CustomNode("Plate",plate.getPlatename(),plate));
-        }
-        Set<Industry> industries = stock.getIndustries();//行业关系节点
-        for(Industry industry:industries){//将每一个行业节点都装进自定义关系节点里
-            relationNodes.add(new CustomNode("Industry",industry.getName(),industry));
-        }
-        Set<Concept> concepts = stock.getConcepts();//概念关系节点
-        for(Concept concept:concepts){//将每一个概念节点都装进自定义关系节点里
-            relationNodes.add(new CustomNode("Concept",concept.getConceptname(),concept));
-        }
-        return relationNodes;//返回所有自定义格式的关系节点
-    }
+//    @PostMapping("/querySRNByshorthand")
+//    public Set<CustomNode> querySRNByshorthand(@RequestParam("stockcode") String stockcode){
+//        Stock stock = findByStockcode(stockcode);//所点击的股票节点，即stockcode的股票实体
+//        Set<CustomNode> relationNodes = new HashSet<>();//初始化自定义关系节点集合
+//        Set<Location> locations = stock.getLocations();//地域关系节点
+//        for(Location location:locations){//将每一个地域节点都装进自定义关系节点里
+//            relationNodes.add(new CustomNode("Location",location.getProvinces(),location));
+//        }
+//        Set<Plate> plates = stock.getPlates();//板块关系节点
+//        for(Plate plate:plates){//将每一个板块节点都装进自定义关系节点里
+//            relationNodes.add(new CustomNode("Plate",plate.getPlatename(),plate));
+//        }
+//        Set<Industry> industries = stock.getIndustries();//行业关系节点
+//        for(Industry industry:industries){//将每一个行业节点都装进自定义关系节点里
+//            relationNodes.add(new CustomNode("Industry",industry.getName(),industry));
+//        }
+//        Set<Concept> concepts = stock.getConcepts();//概念关系节点
+//        for(Concept concept:concepts){//将每一个概念节点都装进自定义关系节点里
+//            relationNodes.add(new CustomNode("Concept",concept.getConceptname(),concept));
+//        }
+//        return relationNodes;//返回所有自定义格式的关系节点
+//    }
 
     /**
-     * 查询某板块的股票关系节点
+     * 查询某板块的股票关系节点，返回市值前10的
      * @param platename
      * @return
      */
@@ -115,7 +111,7 @@ public class StockController {
     }
 
     /**
-     * 查询某行业的股票关系节点
+     * 查询某行业的股票关系节点，返回市值前10的
      * @param name
      * @return
      */
@@ -126,7 +122,7 @@ public class StockController {
     }
 
     /**
-     * 查询某地域的股票关系节点
+     * 查询某地域的股票关系节点，返回市值前10的
      * @param provinces
      * @return
      */
@@ -137,7 +133,7 @@ public class StockController {
     }
 
     /**
-     * 查询某概念的股票关系节点
+     * 查询某概念的股票关系节点，返回市值前10的
      * @param conceptname
      * @return
      */
@@ -269,6 +265,11 @@ public class StockController {
         return endresult;
     }
 
+    /**
+     * 通过股票代码查询k线数据
+     * @param stockcode
+     * @return
+     */
     @PostMapping("/kline")
     public List<CustomKlineNode> queryKlineByStockcode(@RequestParam("stockcode") String stockcode){
         Kline kline = stockService.queryKlineByStockcode(stockcode);//根据股票代码查询k线数据
@@ -295,22 +296,69 @@ public class StockController {
         customKlineNodes.add(new CustomKlineNode(kline.getDate17(),kline.getOpen17(),kline.getClose17(),kline.getHigh17(),kline.getLow17(),kline.getVolume17(),kline.getP_change17()));
         customKlineNodes.add(new CustomKlineNode(kline.getDate18(),kline.getOpen18(),kline.getClose18(),kline.getHigh18(),kline.getLow18(),kline.getVolume18(),kline.getP_change18()));
 
+        Collections.reverse(customKlineNodes);//数组元素反转，为了前端显示不逆序
         return customKlineNodes;//返回自定义k线节点数组
     }
 
     /**
-     * 查询行业的股票关系节点,这里这个是备份
+     * 查询某板块的股票关系节点，返回所有的股票简称和代码
+     * @param platename
+     * @return
+     */
+    @PostMapping("/plate1")
+    public Set<CustomNode1> findPRNByplatename (@RequestParam("nodeMsg") String platename){
+        platename = "主板";
+        Set<Stock>  stocks = stockService.findPRNByPlatename(platename);//所有板块股票关系节点
+        Set<CustomNode1> relationNodes = new HashSet<>();//初始化自定义关系节点集合
+        for(Stock stock:stocks){//将每一个板块关系的股票节点都装进自定义关系节点里
+           relationNodes.add(new CustomNode1(stock.getShorthand(),stock.getStockcode()));
+        }
+        return relationNodes;//返回所有自定义格式的关系节点
+    }
+
+    /**
+     * 查询某行业的股票关系节点，返回所有的股票简称和代码
      * @param name
      * @return
      */
-    //@PostMapping("/queryIRNByName")
-    //public Set<CustomNode> queryIRNByName (@RequestParam("name") String name){
-    //    Set<Stock>  stocks = stockService.queryIRNByName(name);//股票关系节点
-    //    Set<CustomNode> relationNodes = new HashSet<>();//初始化自定义关系节点集合
-    //    for(Stock stock:stocks){//将每一个板块关系的股票节点都装进自定义关系节点里
-    //       relationNodes.add(new CustomNode("Stock",stock.getShorthand(),stock));
-    //    }
-    //    return relationNodes;//返回所有自定义格式的关系节点
-    //}
+    @PostMapping("/industry1")
+    public Set<CustomNode1> findIRNByName (@RequestParam("nodeMsg") String name){
+        Set<Stock>  stocks = stockService.findIRNByName(name);//行业所有股票关系节点
+        Set<CustomNode1> relationNodes = new HashSet<>();//初始化自定义关系节点集合
+        for(Stock stock:stocks){//将每一个板块关系的股票节点都装进自定义关系节点里
+            relationNodes.add(new CustomNode1(stock.getShorthand(),stock.getStockcode()));
+        }
+        return relationNodes;//返回所有自定义格式的关系节点
+    }
+
+    /**
+     * 查询某地域的股票关系节点，返回所有的股票简称和代码
+     * @param provinces
+     * @return
+     */
+    @PostMapping("/location1")
+    public Set<CustomNode1> findLRNByLocation (@RequestParam("nodeMsg") String provinces){
+        Set<Stock>  stocks = stockService.findLRNByLocation(provinces);//所有地域股票关系节点
+        Set<CustomNode1> relationNodes = new HashSet<>();//初始化自定义关系节点集合
+        for(Stock stock:stocks){//将每一个板块关系的股票节点都装进自定义关系节点里
+            relationNodes.add(new CustomNode1(stock.getShorthand(),stock.getStockcode()));
+        }
+        return relationNodes;//返回所有自定义格式的关系节点
+    }
+
+    /**
+     * 查询某概念的股票关系节点，返回所有的股票简称和代码
+     * @param conceptname
+     * @return
+     */
+    @PostMapping("/conception1")
+    public Set<CustomNode1> findCRNByConcept (@RequestParam("nodeMsg") String conceptname){
+        Set<Stock>  stocks = stockService.findCRNByConcept(conceptname);//所有概念股票关系节点
+        Set<CustomNode1> relationNodes = new HashSet<>();//初始化自定义关系节点集合
+        for(Stock stock:stocks){//将每一个板块关系的股票节点都装进自定义关系节点里
+            relationNodes.add(new CustomNode1(stock.getShorthand(),stock.getStockcode()));
+        }
+        return relationNodes;//返回所有自定义格式的关系节点
+    }
 
 }

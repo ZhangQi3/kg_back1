@@ -64,7 +64,7 @@ public class StockService {
     //}
 
     /**
-     * 查询板块的股票关系节点
+     * 查询板块的股票关系节点，返回市值前10的
      * @param platename
      * @return
      */
@@ -73,7 +73,7 @@ public class StockService {
     }
 
     /**
-     * 查询行业的股票关系节点
+     * 查询行业的股票关系节点，返回市值前10的
      * @param name
      * @return
      */
@@ -82,7 +82,7 @@ public class StockService {
     }
 
     /**
-     * 查询地域的股票关系节点
+     * 查询地域的股票关系节点，返回市值前10的
      * @param provinces
      * @return
      */
@@ -91,13 +91,50 @@ public class StockService {
     }
 
     /**
-     * 查询概念的股票关系节点
+     * 查询概念的股票关系节点，返回市值前10的
      * @param conceptname
      * @return
      */
     public Set<Stock> queryCRNByConcept(String conceptname){
         return stockDao.queryCRNByConcept(conceptname);
     }
+
+    /**
+     * 查询板块的股票关系节点，返回所有
+     * @param platename
+     * @return
+     */
+    public Set<Stock> findPRNByPlatename(String platename){
+        return stockDao.findPRNByPlatename(platename);
+    }
+
+    /**
+     * 查询行业的股票关系节点，返回所有
+     * @param name
+     * @return
+     */
+    public Set<Stock> findIRNByName(String name){
+        return stockDao.findIRNByName(name);
+    }
+
+    /**
+     * 查询地域的股票关系节点，返回所有
+     * @param provinces
+     * @return
+     */
+    public Set<Stock> findLRNByLocation(String provinces){
+        return stockDao.findLRNByLocation(provinces);
+    }
+
+    /**
+     * 查询概念的股票关系节点，返回所有
+     * @param conceptname
+     * @return
+     */
+    public Set<Stock> findCRNByConcept(String conceptname){
+        return stockDao.findCRNByConcept(conceptname);
+    }
+
 
     /**
      * 查询特定股票的概念关系节点,返回10个
@@ -118,7 +155,7 @@ public class StockService {
     }
 
     /**
-     * 通过股票代码查询股票
+     * 通过股票代码查询k线
      * @param stockcode
      * @return
      */
